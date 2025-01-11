@@ -1,44 +1,62 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include <iostream>
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0,0,width,height);
+}
+
+void inputProcessing(GLFWwindow *window) {
+    if(glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
 
 int main() {
-    // Initialize GLFW
-    if (!glfwInit()) {
-        return -1; // Initialization failed
-    }
+    //Initialise GLFW
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Template Window", nullptr, nullptr);
-    if (!window) {
+    //Create the GLFW window for the application
+    GLFWwindow* digCreateWindow = glfwCreateWindow(1080, 720, "Dig Create", NULL, NULL);
+    if(digCreateWindow == NULL) {
+        std::cout << "The Window Didnt Create (GLFW's Fault, Not Mine)" << std::endl;
         glfwTerminate();
-        return -1; // Window creation failed
+        return -1;
     }
+    //Make the window context current so it opens in front of other apps
+    glfwMakeContextCurrent(digCreateWindow);
 
-    // Make the OpenGL context current
-    glfwMakeContextCurrent(window);
-    // Initialize GLAD to load OpenGL functions
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        return -1; // GLAD initialization failed
+    //Initialise GLAD
+    if(!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        std::cout << "Failed to do the GLAD stuff" << std::endl;
+        return -1;
     }
+    //Creates The Viewport For The Application
+    glViewport(0,0,1080,720);
 
-    // Loop until the user closes the window
-    while (!glfwWindowShouldClose(window)) {
-        // Render here (you can add OpenGL rendering code later)
+    //Frame Buffer Size Callback (Basically Should Resize The Window)
+    glfwSetFramebufferSizeCallback(digCreateWindow, framebuffer_size_callback);
 
-        // Clear the screen with a color (optional)
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black
+    //Run whilst app is open
+    while(!glfwWindowShouldClose(digCreateWindow)) {
+
+        //Input Processing
+        inputProcessing(digCreateWindow);
+
+        //Clear Background
+        glClearColor(0.0f,0.0f,0.0f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Swap buffers
-        glfwSwapBuffers(window);
+        //Frame Buffer Swap
+        glfwSwapBuffers(digCreateWindow);
 
-        // Poll for and process events
+        //IDK TBH LearnOpenGL Said To Put It Here
         glfwPollEvents();
     }
 
-    // Clean up and terminate GLFW
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(digCreateWindow);
     glfwTerminate();
-
     return 0;
 }
